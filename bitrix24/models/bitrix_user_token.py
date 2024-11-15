@@ -86,7 +86,7 @@ class BitrixUserToken(models.Model, BaseBitrixToken):
     def get_by_signed_pk(cls, signed_pk):
         from django.core.signing import TimestampSigner
         signer = TimestampSigner(key=settings.APP_SETTINGS.secret_key)
-        pk = signer.unsign(signed_pk)
+        pk = signer.unsign(signed_pk, max_age=getattr(settings, 'HEADER_TTL', None)) # HEADER_TTL is datetime.timedelta
         return cls.objects.get(pk=pk)
 
     def get_auth_key(self):
